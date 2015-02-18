@@ -65,9 +65,9 @@ int main(int argc, char **argv) {
   int sizeA = numARows * numAColumns * sizeof(float);
   int sizeB = numBRows * numBColumns * sizeof(float);
   int sizeC = numCRows * numCColumns * sizeof(float);
-  cudaMalloc((void**) &deviceA, sizeA);
-  cudaMalloc((void**) &deviceB, sizeB);
-  cudaMalloc((void**) &deviceC, sizeC);
+  wbCheck(cudaMalloc((void**) &deviceA, numARows * numAColumns * sizeA));
+  wbCheck(cudaMalloc((void**) &deviceB, numBRows * numBColumns * sizeB));
+  wbCheck(cudaMalloc((void**) &deviceC, numCRows * numCColumns * sizeC));
 
   wbTime_stop(GPU, "Allocating GPU memory.");
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
   wbTime_stop(GPU, "Copying input memory to the GPU.");
 
   //@@ Initialize the grid and block dimensions here
-  int TILE_WIDTH = 32;
+  const int TILE_WIDTH = 16;
   dim3 dimGrid((numCColumns - 1) / TILE_WIDTH + 1, (numCRows - 1) / TILE_WIDTH + 1, 1);
   dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 1);
 
